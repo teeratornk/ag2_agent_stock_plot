@@ -1,0 +1,31 @@
+The script is headed in the right direction, but several points still need attention before it can be considered production-ready.
+
+1. Data accuracy  
+   • The excerpt does not actually show the YTD-normalisation logic. Make sure you:  
+     – Pull Adjusted Close, not Close.  
+     – Slice from the first trading day of the current year (`pd.Timestamp.today().year`).  
+     – Normalise to 100 or calculate % change from that first price.  
+   • Confirm that the moving-average windows (20 & 50) are computed on the already-normalised series, otherwise the MA lines will be on a different scale.
+
+2. Plot features  
+   • Moving averages and annotations are listed as active, but the code shown does not build or plot them. Ensure they are added with distinguishable colours/linestyles and that the legend reflects them.  
+   • Annotation helpers (e.g., last price, YTD % gain) would greatly improve interpretability—verify they exist in the hidden portion.
+
+3. Visual clarity & professional appearance  
+   • The duplicate style-selection block is redundant. Keep one try/except.  
+   • Explicitly set `figsize`, line widths, and font sizes in the call to `plt.subplots()` for consistency.  
+   • Add:  
+     – Title: “YTD Performance 2024 – NVDA vs TSLA”  
+     – X-label “Date”, Y-label “Indexed price (Jan 1 = 100)”  
+     – Tight layout (`fig.tight_layout()`) before saving.  
+
+4. Error handling  
+   • The broad `except Exception: pass` swallows important failures (e.g., style not found, file-write permissions). Replace with specific exceptions or at least log a warning via `print()` or `logging`.  
+   • Wrap the data download block in try/except to handle network or symbol errors gracefully.
+
+5. Code hygiene  
+   • Remove unused imports (`sys as _sys`).  
+   • Use more descriptive variable names instead of leading underscores outside the “private helper” context.  
+   • Save the file with `dpi=150` or similar to improve resolution.
+
+Addressing the above will satisfy all evaluation criteria.

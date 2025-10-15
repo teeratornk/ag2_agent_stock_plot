@@ -1,0 +1,54 @@
+Key observations from the code snippet and run metadata:
+
+1. Data accuracy  
+   • A dedicated get_first_trading_day() helper is used to locate the first open trading session, which is a good idea for a true-YTD return.  
+   • However, the function loops indefinitely without a maximum number of retries or an exception catch around the yfinance call – if the service is down or the symbol is invalid the loop can hang.  
+   • The snippet shows data = yf.dow … (`yf.dow` is not a valid attribute). If the real code uses this, it would silently fail and the loop could become infinite; if it is replaced further down the truncated part, clarity is still missing.  
+
+2. Plot features  
+   • figsize, custom line_width, grid, 2 × moving averages, peak detection, annotations and separate volume panel – all good.  
+   • A benchmark line (e.g., SPY) is not implemented although requested by the user.  
+   • No handling for days with missing volume (holidays) when plotting volume bars.  
+   • No legend entry for the moving averages or peak annotations is shown in the snippet.  
+
+3. Visual clarity / professional appearance  
+   • choose_style() provides graceful fallback – nice touch.  
+   • Need to confirm that:  
+     – Title includes symbol and “YTD %” or similar.  
+     – Axes labels (Price USD, Date, Volume) are present.  
+     – Peak annotations are limited so they don’t clutter the chart (not visible in snippet).  
+   • Matplotlib rcParams (font size, rotation of date ticks) are not addressed; long-ticker date axes may overlap.  
+
+4. Error handling  
+   • No try/except around the yfinance download itself – a network error would raise and crash.  
+   • Infinite loop risk noted above.  
+   • No defensive check that returned dataframe is non-empty before calculations.  
+
+5. Miscellaneous  
+   • Code should respect the user’s regen count (1/3) and cache data to disk to lower API calls.  
+   • Consider adding CLI arguments so symbols, MA windows, etc. can be changed without editing code.  
+
+Recommendations for the next iteration:
+
+1. Fix get_first_trading_day():  
+   – Replace `yf.dow` with a valid download call, add a maximum of N attempts and raise a clear error if data cannot be obtained.  
+
+2. Wrap yfinance download in try/except; return a helpful message and skip the symbol instead of crashing.  
+
+3. Add an optional benchmark parameter and plot its YTD line on the same axis (secondary color & dashed style).  
+
+4. Improve labelling:  
+   – Title: “NVDA & TSLA – YTD Performance 2024”  
+   – y-axis: “Price (USD)”  
+   – Second axis for volume: “Volume (Shares)”  
+   – Legend entries for each line, MA, benchmark.  
+
+5. Use matplotlib.dates for auto-formatted date ticks and rotate x-tick labels for readability.  
+
+6. Limit the number of peak annotations or use alpha transparency to avoid visual clutter.  
+
+7. Validate that moving_average windows are < length of dataset to avoid NaNs at front of plot.  
+
+8. Provide a CLI flag or bool to toggle volume / peaks / MAs, so the user can declutter if desired.  
+
+With these tweaks the script will be more robust, maintainable, and visually polished.

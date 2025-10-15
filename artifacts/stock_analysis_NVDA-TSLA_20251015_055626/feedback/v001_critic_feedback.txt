@@ -1,0 +1,29 @@
+The current implementation is on the right track but does not yet meet all of the evaluation criteria.
+
+1. Data accuracy / YTD calculation  
+   • The snippet stops at column-selection logic; the actual YTD performance calculation is not visible. Please ensure you normalize prices to 100 (or calculate percent change from the first trading day) and plot that instead of raw prices.  
+   • The KeyError trace suggests the column-detection logic still fails in some cases for a multi-index DataFrame. After identifying `price_key`, you also need to subset by symbol, e.g.  
+     `prices = data[price_key].loc[:, symbols]` for multi-index or `data[price_key]` for single symbol.
+
+2. Plot features  
+   • Only basic line plotting is implied. Consider adding:  
+     – Moving averages (e.g., 20-d, 50-d) for context  
+     – YTD annotation labels showing exact % return next to the last point  
+     – A legend identifying each line clearly.
+
+3. Visual clarity / Professional appearance  
+   • Ensure the code sets a title such as “YTD Performance 2024 (NVDA, TSLA)”.  
+   • Label the y-axis “YTD Return (%)” or “Indexed Price (Start = 100)”.  
+   • Date formatting on the x-axis (e.g., `AutoDateLocator`, `DateFormatter`) will improve readability.  
+   • Explicitly set `figsize`, `line_width`, and apply a style (`plt.style.use("seaborn-v0_8")`) for consistency.
+
+4. Error handling  
+   • Good start with the empty-data check, but also wrap download in try/except to provide a clearer message on network errors.  
+   • Validate that each requested symbol exists in the returned DataFrame and warn if any are missing.
+
+5. Professional polish  
+   • Add grid transparency (`alpha=0.3`) so it doesn’t overpower the data lines.  
+   • Tight layout (`plt.tight_layout()`) before saving.  
+   • Save figure with a dynamic filename (e.g., `ytd_NVDA_TSLA_2024.png`) and DPI ≥ 150.
+
+Addressing the column-selection bug, implementing the actual YTD calculation, and incorporating these visual and usability enhancements will make the plot production-ready.

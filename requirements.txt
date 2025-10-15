@@ -1,0 +1,6 @@
+ag2[openai]
+streamlit
+yfinance
+matplotlib
+pandas
+python-dotenv

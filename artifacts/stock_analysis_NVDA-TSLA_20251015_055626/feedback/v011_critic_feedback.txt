@@ -1,0 +1,29 @@
+Key areas for further refinement:
+
+1. Data accuracy  
+   • get_first_trading_day() is a nice touch, but it can spin forever if yfinance keeps error-ing. Add a max retry counter and specific exception handling around yf.download.  
+   • Verify that the YTD calculation always uses the first *adjusted* close of the calendar year, not Close. If the ticker has splits or dividends, Close can mis-state the return.  
+   • If tickers have different first‐trading dates (e.g., one has a holiday), align the return series to the later of the two first-trading days or pad with NaNs so the percentage change is computed relative to each asset’s own day-0.
+
+2. Plot features  
+   • Volume should be plotted on a secondary y-axis so the price series scale is not distorted.  
+   • Consider adding a benchmark index (e.g., ^GSPC or SPY) to satisfy earlier user feedback.  
+   • Peaks are marked, but troughs/minima can also be useful.  
+   • Moving-average length is hard-coded; expose it as a parameter.
+
+3. Visual clarity  
+   • Ensure the Y-axis is formatted as percent when plotting YTD returns, otherwise viewers may mistake raw prices for returns.  
+   • Increase annotation font size slightly and add arrowprops to keep text from overlapping the peak markers.  
+   • Tighten layout (plt.tight_layout()) or use constrained_layout to avoid label clipping.
+
+4. Error handling & robustness  
+   • Wrap yf.download in a try/except with informative error messages.  
+   • Detect and warn if returned dataframe is empty (e.g., delisted tickers).  
+   • Add an argparse or config section so the script fails gracefully when input symbols are missing.
+
+5. Professional appearance  
+   • Add a figure title such as “NVDA vs TSLA – YTD % Change (2024)” so readers know the context immediately.  
+   • Label primary and secondary axes explicitly (“YTD Return (%)”, “Volume (shares)”).  
+   • Include citation for data source (“Data: Yahoo Finance”) in a footer.
+
+Addressing the above will improve robustness, interpretability, and polish.

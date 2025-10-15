@@ -1,0 +1,25 @@
+The script works end-to-end and produces a basic YTD-%-gain plot, but several aspects can be tightened or enhanced.
+
+1. Data accuracy
+   • Year-start is hard–coded to Jan-01; if that day is a holiday the first quote returned will be later, which is fine, but you should explicitly grab the first valid price with `.iloc[0]` (or `first_valid_index`) and document that in comments.
+   • The YTD % gain calculation (not visible in the truncated code) should use `(price / first_price - 1) * 100`. Double-check that you do not use `pct_change()` starting at the second row, which would drop the first day and shift the curve.
+   • Consider using `auto_adjust=True` (or continue with `Adj Close`) to avoid the corporate‐action ambiguity when the default changes in yfinance 0.2.x.
+
+2. Plot features
+   • Only raw YTD lines are drawn. Adding a 20- or 50-day moving average, and perhaps the S&P 500 as a benchmark, would give more analytical value.
+   • Add annotations for major events (earnings, splits) to justify including the `annotations` feature flag later.
+
+3. Visual clarity
+   • Verify that a legend is actually created and that line colors are distinct; set `plt.legend()` with `loc='best'`.
+   • Increase font sizes (`plt.rcParams['font.size']=12`) for readability in saved PNGs.
+   • For % returns, it is useful to force y-axis to percent formatting (`plt.gca().yaxis.set_major_formatter(mpl.ticker.PercentFormatter()`).
+
+4. Error handling
+   • You partially guard against empty downloads, but after that no try/except exists for network errors or NA values. Wrap `yf.download` in a try/except and exit gracefully with an informative message.
+   • When concatenating multiple tickers, align on an inner join or explicitly forward-fill missing dates to avoid ValueErrors on differing calendars.
+
+5. Professional appearance
+   • Add an overall title such as “Year-to-Date % Gain (NVDA vs TSLA, 2024)” and axis labels “Date” / “% Gain”.
+   • Include a footnote with data source and generation date for reproducibility.
+
+Implementing the above will improve robustness and analytical usefulness.

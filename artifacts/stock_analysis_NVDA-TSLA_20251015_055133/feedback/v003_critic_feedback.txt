@@ -1,0 +1,35 @@
+The script is a solid start, but several items still need refinement before it can be considered production–ready.
+
+1. Data accuracy  
+   • The base‐price logic still appears to assume that “Jan-01” exists for every symbol. You should explicitly pick the first non-NaN price for each ticker:
+     ```
+     first_price = adj.dropna().iloc[0]
+     ytd = adj / first_price * 100 – 100
+     ```
+     This guarantees a common 0 % starting point even if the first trading day is Jan-03, etc.  
+   • Consider aligning the date index of all tickers after downloading (e.g., using `pd.concat(..., join='inner')`) so the ratio is never computed against NaNs.
+
+2. Error handling  
+   • Wrap the `yf.download()` call in a try/except and exit gracefully (or skip a symbol) if Yahoo returns nothing.  
+   • Guard the peak-finding block with an “if not series.empty” check; the previous TypeError (label trying to format a DataFrame) hints that the code sometimes feeds the wrong object. A quick fix is:
+     ```
+     if isinstance(series, pd.Series):
+         peak_idx = series.idxmax()
+     ```
+   • Fail-safe the style loop; at present, if none of the three styles load the code will continue in an indeterminate state.
+
+3. Plot features & clarity  
+   • Label axes (“YTD return (%)”, “Date”) and add a legend title (“20-day MA”, etc.) for readability.  
+   • Instead of a single grid toggle, use `ax.grid(True, which='both', linestyle='--', alpha=0.3)` for a lighter look.  
+   • Consider color-blind friendly palettes (e.g., `plt.cm.tab10`).
+
+4. Professional appearance  
+   • The title should contain the year, e.g., “2024 YTD % Return – NVDA vs TSLA”.  
+   • Annotate the peak percentage with proper formatting: `f'{peak_val:.1f} %'` (note the non-breaking space or a normal space) and avoid overlap by offsetting text slightly.  
+   • Tight-layout (`fig.tight_layout()`) before saving to prevent labels from being clipped.
+
+5. Miscellaneous  
+   • Move constants to the top in ALL_CAPS for configurability (e.g., `START_YEAR = dt.date.today().year`).  
+   • If you use moving averages, it is courteous to clip the NaN warm-up period or draw the MA with a dashed line to show it clearly lags.
+
+Addressing these points will improve reliability and presentation quality.

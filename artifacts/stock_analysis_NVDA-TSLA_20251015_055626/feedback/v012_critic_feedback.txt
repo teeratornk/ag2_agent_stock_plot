@@ -1,0 +1,24 @@
+Key points to address before the next release:
+
+1. Data accuracy  
+   • The code still uses Close/Adj Close selection implicitly; be explicit and base the YTD divisor on Adj Close to avoid split/dividend distortion.  
+   • The earlier warning about `get_first_trading_day()` potentially looping forever is still relevant. Add a retry counter (e.g., 5 attempts) and raise a clear exception if yfinance continues failing.  
+
+2. Plot features  
+   • A benchmark ticker (`^GSPC`) is declared, but there is no evidence it is actually plotted or used in the YTD return comparison. Add it to the main axis so users immediately see relative performance.  
+   • Consider shading the difference (out-performance / under-performance) between each security and the benchmark to enhance insight.  
+   • Volume is enabled in the feature list, but the truncated code does not show a second axis for it. Ensure a separate bar subplot or twin axis exists and is clearly labeled.  
+
+3. Visual clarity / professional appearance  
+   • Titles, axis labels, legend titles, and color choices are not visible in the snippet. Verify they are set explicitly (e.g., “YTD Total Return (%)”, “Date”, “Volume”).  
+   • Recent-peak annotations: confirm they do not overlap each other or the data; use `bbox` or `offset` to keep text readable.  
+
+4. Error handling  
+   • Wrap `yf.download()` in a try/except that handles network errors and empty dataframes; fail gracefully with a user message.  
+   • Guard against `IndexError` if there are fewer than `annotate_peaks` detected.  
+
+5. Extras for polish  
+   • Allow turning off/on each feature via command-line flags or config dict for flexibility.  
+   • Add a subtitle with data-as-of date and the benchmark symbol for context.  
+
+Addressing these items will raise robustness and user value considerably.

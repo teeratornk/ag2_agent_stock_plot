@@ -1,0 +1,36 @@
+The submission cannot be approved yet – the script does not run to completion and several quality issues remain.
+
+Key problems and concrete suggestions:
+
+1. Runtime failure  
+   • simple_peaks() crashes when hstack-ing arrays of mismatching length.  
+     – Use numpy.concatenate on arrays of identical shape or switch to scipy.signal.find_peaks (robust and battle-tested).  
+     – Always guard peak calculation with try/except so the entire plot doesn’t abort.
+
+2. YTD calculation accuracy  
+   • Ensure compute_ytd_change() uses the first trading day of the current calendar year, not merely the first row returned by yfinance (which may include earlier data if ‘period’ isn’t restricted).  
+   • Recommended:  
+     start = pd.Timestamp.today().normalize().replace(month=1, day=1)  
+     first_price = series.loc[series.index >= start].iloc[0]
+
+3. Volume feature (requested by the user)  
+   • Add a secondary axis (ax.twinx()) and draw volume as semi-transparent bars:  
+     ax2.bar(df.index, df['Volume'], color='gray', alpha=VOLUME_ALPHA)  
+   • Label the axis (“Volume (shares)”) and optionally format large numbers with mpl.ticker.FuncFormatter.
+
+4. Visual clarity & professionalism  
+   • Tighten layout (fig.tight_layout()) and ensure legend doesn’t overlap bars.  
+   • Use descriptive title, e.g. “NVDA & TSLA – YTD % Change with 20-day MA and Volume”.  
+   • Grid lines should be subtle (alpha≈0.2).  
+   • Use date formatting on the x-axis (mdates.MonthLocator/DateFormatter).
+
+5. Error handling & robustness  
+   • Wrap yfinance download in a try/except block and exit gracefully if tickers are invalid or network fails.  
+   • Check for empty DataFrames or NaNs before plotting.
+
+6. Code tidiness  
+   • Remove unused imports (sys).  
+   • Put constants in UPPER_CASE.  
+   • Use type hints consistently.
+
+Addressing the crash, verifying YTD logic, and polishing volume plotting will make the script production-ready.

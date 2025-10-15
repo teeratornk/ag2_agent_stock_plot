@@ -1,0 +1,38 @@
+The script is progressing, but several key items still need refinement before it can be considered production-ready.
+
+1. Data accuracy (YTD logic)
+   • The snippet ends before the YTD normalisation step.  
+     – Make sure you take the price on the first trading day of the year for each symbol and transform the full series to a percentage or index (e.g., `price / price.iloc[0] - 1` or `price / price.iloc[0] * 100`).  
+     – Confirm you are using Adjusted Close throughout (you handled the MultiIndex case correctly, but the single‐index branch is truncated).  
+     – Guard against a holiday/weekend at the beginning of the year by calling `.first_valid_index()`.
+
+2. Plot features
+   • Moving averages: you declare `[20, 50]` but the plotting code is not shown. Be sure to:  
+     – Compute MA on the *normalised* series (or plot on price lines with a secondary axis).  
+     – Use a lighter colour/α so the MA lines don’t overpower the main series.  
+   • Peak / annotate features: not visible in the snippet. Verify that:  
+     – Peak detection is done on the YTD series, not raw price.  
+     – The annotation text is clipped to stay in the figure bounds.  
+   • Grid: add `plt.grid(True, alpha=0.3, linestyle='--')` for readability.
+
+3. Visual clarity
+   • Choose a consistent matplotlib style (e.g., `plt.style.use("seaborn-v0_8")`).  
+   • Explicitly set `figsize` and `dpi` for retina clarity: `plt.figure(figsize=(12,6), dpi=110)`.  
+   • Label axes:  
+     – y-axis: “YTD Return (%)” or “Indexed Price (Jan-1 = 100)”.  
+     – x-axis: “Date”.  
+   • Provide a descriptive title such as “NVDA vs TSLA – YTD Performance”.
+
+4. Error handling
+   • Wrap the `yf.download` call in try/except to catch network/HTTP errors.  
+   • Check for empty DataFrames and stop gracefully with an informative message.  
+   • When computing moving averages, handle shorter data series (use `min_periods=1`).
+
+5. Professional appearance
+   • Ensure legends do not overlap annotations by using `loc="best"` or manual placement.  
+   • Tight layout (`plt.tight_layout()`) before saving to file.  
+   • Save the plot with a transparent background or a white facecolor for presentations (`plt.savefig(output_file, facecolor='white')`).
+
+Once these items—particularly the correct YTD normalisation and visible implementation of the advertised features—are in place, the script will satisfy the stated criteria.
+
+APPROVED is not yet appropriate; please address the above points.

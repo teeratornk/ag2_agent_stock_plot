@@ -1,0 +1,33 @@
+The current implementation is close, but several issues remain that prevent it from being production–ready:
+
+1. Peak annotation bug  
+   • The traceback shows `df["Close"].nlargest(PEAK_ANNOTATIONS)` failing because, with multiple tickers, `df["Close"]` becomes a DataFrame (one “Close” column per ticker).  
+   • Fix: loop through tickers individually or call `df["Close"][ticker].nlargest(...)`.
+
+2. Y-T-D accuracy  
+   • From the partial code it is unclear whether you:
+     a) slice from 1-Jan of the current year, and  
+     b) use the first trading day’s close rather than assuming 1-Jan exists in the index.  
+   • Ensure `start = pd.Timestamp.today().normalize().replace(month=1, day=1)` then `df.loc[df.index >= start]`, and use `first_valid_index()` to obtain the base price.
+
+3. Volume subplot for multiple tickers  
+   • With more than one ticker you should create a separate volume axis per ticker or at least stack/offset them; otherwise overlapping bars become unreadable.  
+   • Add a legend or colour key for volume as well.
+
+4. Visual clarity & colour palette  
+   • Explicitly assign distinct colours to: price, moving average, and volume for each ticker.  
+   • Make MA lines thinner or dashed, and keep price lines bolder for quick differentiation.
+
+5. Error handling  
+   • Wrap the yfinance download in try/except and exit gracefully if data retrieval fails.  
+   • Guard against empty DataFrames after filtering for YTD.
+
+6. Professional labelling  
+   • Verify that each subplot has axis labels ( “Price (USD)”, “Volume (shares)” ), a descriptive title ( e.g., “NVDA & TSLA – YTD Performance” ), and a clear legend that distinguishes price vs. MA.  
+   • Include a footnote with data source and generation date.
+
+7. Code cleanliness  
+   • Remove nested try/except for style selection; a simple fallback list suffices.  
+   • Parameterise constants (e.g., MA_WINDOW, PEAK_ANNOTATIONS) via argparse or function arguments for reuse.
+
+Addressing the above will make the plot error-free, accurate, and more readable.

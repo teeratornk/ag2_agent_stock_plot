@@ -1,0 +1,7 @@
+[Priority: Critical]
+
+Additional details:
+• Add volume subplot
+• Add price annotations
+• Improve colors
+• Better labels

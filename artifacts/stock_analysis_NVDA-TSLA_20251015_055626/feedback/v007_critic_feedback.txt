@@ -1,0 +1,37 @@
+The v6 revision is heading in the right direction, but several gaps remain before it can be considered production-ready.
+
+1. Data accuracy / YTD logic
+   • The code section that actually converts raw prices to YTD % return is not visible. If you simply plot raw “Adj Close”, the figure is NOT a YTD-gain chart.  
+   • Add:  
+     ```
+     ytd = price_df.div(price_df.iloc[0]).sub(1.0) * 100   # % gain
+     ```
+     …and plot `ytd` instead of raw prices.
+
+2. Peak annotation bug still unresolved
+   • You still slice `price_df["Close"]` (or `Adj Close`) as if it were a Series, but for multi-ticker downloads it is a DataFrame. Loop over symbols:  
+     ```
+     for sym in symbols:
+         peaks = price_df[sym].nlargest(N_PEAKS)
+         ...
+     ```
+
+3. Volume subplot
+   • `vol_df` assignment is truncated in the snippet; be sure it is completed (`vol_df = data["Volume"].copy()`).  
+   • Create a secondary subplot (`gridspec` or `fig.add_subplot(2,1,2, sharex=ax1)`) and use a bar chart with subdued color (e.g., gray with alpha).
+
+4. Visual clarity / professional appearance
+   • Choose distinct, color-blind-friendly lines (`colorblind` palette or matplotlib tab10).  
+   • Increase line width for price, thinner for moving averages.  
+   • Rotate and format x-axis ticks (`ax.xaxis.set_major_formatter(mdates.DateFormatter('%b'))`).  
+   • Add `ylabel` for “% Gain YTD” and “Volume (shares)”, a chart title with current date, and a concise legend.
+
+5. Error handling
+   • Wrap the `yf.download` call in try/except to catch connectivity issues.  
+   • Verify the data frame is non-empty; exit gracefully if download fails.
+
+6. Miscellaneous
+   • Apply `plt.tight_layout()` before saving to avoid label clipping.  
+   • Save file name should embed the year or date for traceability (e.g., `f"ytd_stock_gains_{current_year}.png"`).
+
+Address the above and the chart should meet production quality standards.

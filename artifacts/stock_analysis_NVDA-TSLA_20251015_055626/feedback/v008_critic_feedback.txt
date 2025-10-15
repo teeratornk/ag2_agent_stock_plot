@@ -1,0 +1,39 @@
+The v7 script is moving in the right direction, but several critical issues remain before it can be considered production-ready.
+
+1. Data accuracy – YTD calculation still missing  
+   • The snippet shows only raw price downloads. There is no explicit conversion to YTD % gain (price / first-price – 1).  
+   • Fix:  
+     ```
+     adj = df['Adj Close']
+     ytd = adj.div(adj.iloc[0]).sub(1).mul(100)   # % gain
+     ```
+   • Ensure the first row is the first trading day of the current year, not merely the first row returned.
+
+2. Volume subplot  
+   • The code imports volume but the implementation is truncated. Confirm that:  
+     – A separate axis (`ax2 = ax1.twinx()` or `fig.add_subplot`) is created.  
+     – Volume is plotted as bars with alpha≈0.3 so it doesn’t hide price lines.  
+     – Axis label “Volume (shares)” is added and a secondary y-axis is visually distinct (e.g., grey tick labels).
+
+3. Moving averages / peaks / annotations  
+   • No visible code that actually computes SMA (e.g., 20-day, 50-day) or finds peaks (`scipy.signal.find_peaks` or `argrelextrema`).  
+   • Implement them and add a legend entry. Use markers or small arrows for peak annotations to avoid clutter.
+
+4. Visual clarity  
+   • Choose a consistent color palette; currently style fallback can yield conflicting defaults. Manually assign colors per symbol and MA lines.  
+   • Use thicker lines for prices (lw≈2) and thinner, semi-transparent lines for MAs.  
+   • Rotate x-tick labels and format dates with `mdates.DateFormatter('%Y-%m')`.
+
+5. Labels / title  
+   • Add a concise title such as “YTD % Return – NVDA vs TSLA (2024)”.  
+   • y-axis should read “% Return (YTD)”, not “Price”.  
+   • Include `fig.tight_layout()` before saving.
+
+6. Error handling  
+   • Wrap yfinance download in try/except and raise a clear message if symbols are invalid or internet is down.  
+   • Handle missing data with `dropna(how='all')` after aligning tickers.
+
+7. File save confirmation  
+   • Print the save location and ensure `dpi=300` for publication-quality output.
+
+Addressing the above will satisfy the data-accuracy requirement and elevate overall professionalism.

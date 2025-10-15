@@ -1,0 +1,22 @@
+• Data accuracy  
+  – The “start” date appears to be hard-coded to Jan-01; if the first trading day is later, the initial price should be taken with `.loc[first_valid_index]` (or `.iloc[0]` after `dropna`) per symbol before computing the YTD return. Right now the script may divide by NaN or use the next available price implicitly, which can shift the base date inconsistently across tickers.  
+  – Confirm that dividends/splits are neutralised (`auto_adjust=True`) when downloading; otherwise use the “Adj Close” column explicitly.
+
+• Plot features  
+  – A moving-average line is declared active but the code segment that actually computes and plots it is not shown. Make sure the MA is calculated over a stated window (e.g., 20 days) and labelled in the legend.  
+  – Annotations: identify the YTD high/low or last price for each ticker; current implementation is not visible. Include arrowprops for readability.
+
+• Visual clarity  
+  – Specify `figsize` explicitly (`fig, ax = plt.subplots(figsize=(10,6))`) so long symbol names and legend entries do not crowd.  
+  – Increase line width (e.g., 2.0) and use distinct color/linestyle pairs for tickers vs. moving averages.  
+  – Rotate x-tick labels 45° to avoid overlap.
+
+• Error handling  
+  – Wrap the yfinance call in try/except and exit gracefully with a helpful message if the download fails (network/throttle).  
+  – Check for empty DataFrames and skip plotting to prevent runtime errors.
+
+• Professional appearance  
+  – Add an overall title, axis labels (“Date”, “YTD % Gain”), legend in upper left, and source/footer (“Data: Yahoo Finance, pulled <date>”).  
+  – Use `ax.yaxis.set_major_formatter(mpl.ticker.PercentFormatter())` so the y-axis shows “10 %” instead of “0.10”.
+
+Addressing these points will tighten calculation accuracy and polish the visual output.
