@@ -12,7 +12,7 @@ These five images illustrate the iterative evolution of the YTD stock plot as th
 
 <p align="center">
   <img src="assets/v001_critic_plot.png" width="30%" />
-  <img src="assets/v004_critic_plot.png" width="30%" />
+  <img src="assets/v004_user_plot.png" width="30%" />
   <img src="assets/v007_critic_plot.png" width="30%" /><br/>
   <img src="assets/v010_critic_plot.png" width="30%" />
   <img src="assets/v012_critic_plot.png" width="30%" />
