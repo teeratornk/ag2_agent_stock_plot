@@ -1,6 +1,5 @@
-## Evolution Teaser (Progressive Plot Versions)
-
-These five images illustrate the iterative evolution of the YTD stock plot as the agent system incorporated critic and user feedback. Each later version reflects added features (e.g., moving averages, volume, annotations, clarity refinements).
+## Evolution Teaser (Stock Example Progressive Plot Versions)
+These images show one concrete domain (YTD stock performance) used to demonstrate the multi‑agent evolutionary loop (writer → executor → critic → user feedback → refinement). The same loop can evolve any plotting or data‑mining pipeline.
 
 | Version | Preview |
 |---------|---------|
@@ -18,7 +17,111 @@ These five images illustrate the iterative evolution of the YTD stock plot as th
   <img src="assets/v012_critic_plot.png" width="30%" />
 </p>
 
-# Evolving Stock Analysis (Agentic YTD Plot Generator)
+> This evolution: baseline → add moving averages → volume & annotations → refinement & clarity.
+
+# Multi-Agent Evolution Framework (Stock YTD Example Included)
+
+A domain‑agnostic framework where autonomous agents iteratively generate, execute, critique, and improve code artifacts (plotting scripts, data extraction/mining modules) with optional human steering. The stock YTD plotting system is one packaged example; the architecture supports any structured data → transform → visualize workflow.
+
+---
+
+## Framework Overview (Domain-Agnostic)
+Stage | Role | Artifact
+------|------|---------
+Generation | Writer Agent / Fallback Generator | New or revised code (plot script, data miner, feature calculator)
+Execution | Sandboxed Runner | Runtime output (files, logs, metrics, images)
+Critique | Critic / Evaluator Agents | Structured feedback, scoring JSON
+Adaptation | Evolution Layer | Capability toggles, feature activation, heuristic learning
+Human Loop | User Feedback | Higher-level qualitative guidance
+Persistence | Artifact Manager | Versioned snapshots, states, diffs, reports
+
+Core Pillars:
+- Deterministic fallback path (no LLM required) keeps loop robust.
+- Critic reasoning without image pixels (code + run context).
+- Pluggable scoring (heuristic + JSON LLM evaluation).
+- Feature toggling via feedback keyword inference.
+- Longitudinal artifact trail for audit & replay.
+
+---
+
+## Domain-Agnostic Capabilities
+Category | Abstraction
+---------|------------
+Data Acquisition | Any loader (API, file, DB) returning Pandas-like frames
+Feature Engineering | Rolling stats, signals, transforms (extensible functions)
+Visualization | Multi‑axis, layered plots, subplots, annotations
+Evolution Signals | Critic text, user text, execution errors
+State Memory | JSON states + incremental feature activation
+Evaluation | Heuristic quality + optional secondary model scoring
+Artifacts | Code, data samples, rendered outputs, feedback logs, evolution report
+
+---
+
+## Included Example: Stock YTD Module
+Implements:
+- yfinance ingestion
+- YTD % change normalization
+- Moving averages, peaks, volume overlay
+- Style fallback chain (ggplot → classic → default)
+- Iterative enrichment through critic/user prompts
+
+---
+
+## Extending Beyond Stocks
+You can plug in:
+Use Case | Replace / Add
+---------|--------------
+Crypto dashboards | Swap data service to ingest exchange APIs
+Sensor / IoT streams | Rolling anomaly detection + temporal plots
+Marketing KPIs | Multi‑metric composite visualization evolution
+LLM evaluation metrics | Latency, quality score distributions
+Geospatial heatmaps | Add geo fetch + map rendering layer
+
+---
+
+## How to Add a New Domain Quickly
+1. Duplicate stock_service.py → your_domain_service.py (implement get_data() returning dict[str, DataFrame]).
+2. Add capability flags (e.g., "outliers", "seasonality", "clustering").
+3. Extend evolution keyword map for those flags.
+4. Create a minimal plot_generator variant or reuse existing with new feature names.
+5. Adjust writer agent system message to mention new feature labels.
+6. Run in mock mode first; confirm artifact capture.
+7. Introduce domain-specific evaluator (optional) for richer scoring.
+
+---
+
+## Agent Loop Lifecycle (Generalized)
+1. Gather active capabilities + recent feedback window.
+2. Writer emits standalone script (always runnable cold).
+3. Executor runs script in isolated folder (cleared per session).
+4. On failure: capture stderr → regeneration attempts.
+5. Critic evaluates code + run context; may APPROVE or suggest improvements.
+6. Evolution layer toggles features / increments versions.
+7. User feedback optionally broadens direction (visual clarity, analytics depth).
+8. Artifact manager commits iteration (code, plot/data samples, states, feedback).
+9. Report synthesizes timeline.
+
+---
+
+## Evolution Signals Interpreted
+Signal Type | Example Phrase | Result
+------------|----------------|-------
+Critic | "Add moving averages" | Activate moving_avg
+User | "Need clearer color contrast" | Future: color palette feature slot
+Error | "KeyError: Volume" | Auto-prompts safer volume handling
+Approval | "APPROVED" | Stops critic loop (unless user continues)
+
+---
+
+## Design Principles
+- Idempotent scripts: each generation yields a self-contained file (no cross-run hidden state).
+- Minimal baseline classes (seed objects) encourage emergent complexity rather than premature abstraction.
+- Safe fallbacks: style application, missing columns, empty frames.
+- Artifact-first: every iteration is auditable & reproducible.
+
+---
+
+## Evolving Stock Analysis (Agentic YTD Plot Generator)
 
 AI‑driven iterative system that generates, executes, critiques, and improves year‑to‑date (YTD) stock performance plots using autonomous agent loops plus user feedback.
 
