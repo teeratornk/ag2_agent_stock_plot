@@ -5,7 +5,7 @@ These five images illustrate the iterative evolution of the YTD stock plot as th
 | Version | Preview |
 |---------|---------|
 | v001 | ![v001 Critic Plot](assets/v001_critic_plot.png) |
-| v004 | ![v004 Critic Plot](assets/v004_critic_plot.png) |
+| v004 | ![v004 Critic Plot](assets/v004_user_plot.png) |
 | v007 | ![v007 Critic Plot](assets/v007_critic_plot.png) |
 | v010 | ![v010 Critic Plot](assets/v010_critic_plot.png) |
 | v012 | ![v012 Critic Plot](assets/v012_critic_plot.png) |
@@ -17,8 +17,6 @@ These five images illustrate the iterative evolution of the YTD stock plot as th
   <img src="assets/v010_critic_plot.png" width="30%" />
   <img src="assets/v012_critic_plot.png" width="30%" />
 </p>
-
-> Tip: New runs will append further versions; treat this gallery as a living progression of capability maturation.
 
 # Evolving Stock Analysis (Agentic YTD Plot Generator)
 
@@ -276,3 +274,4 @@ find artifacts -maxdepth 1 -type d -mtime +14 -exec rm -rf {} \;
 
 ## Attribution
 Built with Streamlit, yfinance, matplotlib, and an agentic loop leveraging Azure/OpenAI (optional).
+
